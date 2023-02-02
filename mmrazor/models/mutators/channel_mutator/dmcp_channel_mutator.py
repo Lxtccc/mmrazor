@@ -113,7 +113,7 @@ class DMCPChannelMutator(ChannelMutator[DMCPChannelUnit]):
         """Sampling according to the input mode."""
         choices = dict()
         for group_id, _ in self.search_groups.items():
-            choices[group_id] = self._prune_by_arch(mode, group_id)
+            choices[str(group_id)] = self._prune_by_arch(mode, group_id)
         self.set_choices(choices)
 
         self.modify_supernet_forward(arch_train)
@@ -159,12 +159,12 @@ class DMCPChannelMutator(ChannelMutator[DMCPChannelUnit]):
             else:
                 raise NotImplementedError
 
-    def set_choices(self, choices: Dict[int, Any]) -> None:
+    def set_choices(self, choices: Dict[str, Any]) -> None:
         """Set mutables' current choice according to choices sample by
         :func:`sample_choices`.
 
         Args:
-            choices (Dict[int, Any]): Choices dict. The key is group_id in
+            choices (Dict[str, Any]): Choices dict. The key is group_id in
                 search groups, and the value is the sampling results
                 corresponding to this group.
         """
@@ -172,7 +172,7 @@ class DMCPChannelMutator(ChannelMutator[DMCPChannelUnit]):
             if group_id not in choices:
                 # allow optional target_prune_ratio
                 continue
-            choice = choices[group_id]
+            choice = choices[str(group_id)]
             for module in modules:
                 module.current_choice = choice
                 module.mutable_channel.activated_tensor_channels = choice
